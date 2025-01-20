@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -eu
+
+REGION=ASIA
+CITY=Tokyo
+HOST=arch
+ln -sf /usr/share/zoneinfo/${REGION}/${CITY}
+hwclock --systohc
+
+echo -e "en_US.UTF-8 UTF-8\nja_JP.UTF-8 UTF8" >> /etc/locale.gen
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
+echo "${HOST}" > /etc/hostname
+
+# bootloader
+pacman -S grub os-prober efibootmgr
+echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+grub-install --targe=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+grub-mkconfig -o /boot/grub/grub.cfg
+
+# doas
+pacman -S doas
+echo "permit persist :wheel" >> /etc/doas.conf
+chmod 0600 /etc/doas.conf
+
+passwd
+echo "reboot and remove install disk"
+exit
