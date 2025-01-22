@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -eu
+
+doas pacman -S noto-fonts-cjk fcitx5-im fcitx5-mozc
+
+doas pacman -S alacritty sway xorg-xwayland qt5-wayland wl-clipboard
+mkdir -p ~/.config/sway
+sed 's/set \$term foot/set \$term alacritty/' /etc/sway/config > ~/.config/sway/config
+
+doas pacman -S pipewire pipewire-pulse
+systemctl --user --now enable pipewire{,-pulse}.{socket,service}
+systemctl --user start pipewire{,-pulse}.service
+
+doas pacman -S firefox
