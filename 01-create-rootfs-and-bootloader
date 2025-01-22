@@ -20,6 +20,12 @@ echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
 grub-install --targe=x86_64-efi --efi-directory=/boot --bootloader-id=grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
+# dhcp
+pacman -S dhcpcd
+ip l
+read -p "Type nic: " NIC
+systemctl enable dhcpcd@${NIC}.service
+
 # doas
 pacman -S doas
 echo "permit persist :wheel" >> /etc/doas.conf
