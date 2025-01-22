@@ -1,17 +1,25 @@
 #!/bin/bash
 
-set -eu
+set -euxo
 
 timedatectl status
 
 fdisk -l ${DISK} # DISK check (e.g.) DISK=/dev/sda
-# use gdisk to setup partion
-# gdisk ${DISK}1 +1G ef00 # EFI System
-# gdisk ${DISK}2 -0G 8304 # Linux root (x86-64)
+echo "Warning: This script will overwrite all data on ${DISK}"
+read -p "Are you want to continue? (y/N): " CONFIRM
+if [[ "$CONFIRM" != "y" ]]; then
+	echo "Operation canceled."
+	exit 1
+fi
+
+sgdisk --zap-all ${DISK}
+# use sgdisk to setup partion
+sgdisk --new=1:2048:+1G --typecode=1:ef00 ${DISK}
+sgdisk --new=2:0:0 --typecode=2:8304 ${DISK}
 
 # make file system
-mkfs.fat -F 32 ${DISK}2
-mkfs.ext4 ${DISK}1
+mkfs.fat -F 32 ${DISK}1
+mkfs.ext4 ${DISK}2
 
 # mount to /mnt
 mkdir -p /mnt/boot
