@@ -22,8 +22,8 @@ mkfs.fat -F 32 ${DISK}1
 mkfs.ext4 ${DISK}2
 
 # mount to /mnt
-mkdir -p /mnt/boot
 mount ${DISK}2 /mnt
+mkdir -p /mnt/boot
 mount ${DISK}1 /mnt/boot
 
 # install essential packages
