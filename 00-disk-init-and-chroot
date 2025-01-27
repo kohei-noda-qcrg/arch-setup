@@ -114,7 +114,8 @@ genfstab -U "$MOUNT_POINT" >>/mnt/etc/fstab
 
 # Copy this script to the new system if it has another script
 if [[ -d "$PARENT/.git" ]]; then
-	cp -r "$PARENT" "$MOUNT_POINT"
+	mkdir -p "$MOUNT_POINT/arch-setup"
+	cp -r "$PARENT" "$MOUNT_POINT/arch-setup"
 fi
 
 arch-chroot "$MOUNT_POINT"
