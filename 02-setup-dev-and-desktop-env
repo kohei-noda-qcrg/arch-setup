@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -eu
+
+RUN_DEV=true
+RUN_DESKTOP=true
+
+# Function to display help message
+show_help() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  --no-dev      Skip setting up development environment"
+    echo "  --no-desktop  Skip setting up desktop environment"
+    echo "  --help        Show this help message"
+}
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+    --no-dev)
+        RUN_DEV=false
+        shift
+        ;;
+    --no-desktop)
+        RUN_DESKTOP=false
+        shift
+        ;;
+    --help)
+        show_help
+        exit 0
+        ;;
+    *)
+        echo "Unknown option: $arg"
+        show_help
+        exit 1
+        ;;
+    esac
+done
+
+common() {
+    doas pacman -S git go
+    pushd /tmp
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si
+    popd
+}
+
+setup_dev_environment() {
+
+    yay -Sy
+    yay -S github-cli
+
+    gh auth login
+}
+
+setup_desktop_environment() {
+    doas pacman -S noto-fonts-cjk fcitx5-im fcitx5-mozc
+
+    doas pacman -S alacritty sway xorg-xwayland qt5-wayland wl-clipboard
+    mkdir -p ~/.config/sway
+    sed 's/set \$term foot/set \$term alacritty/' /etc/sway/config >~/.config/sway/config
+
+    doas pacman -S pipewire pipewire-pulse
+    systemctl --user --now enable pipewire{,-pulse}.{socket,service}
+    systemctl --user start pipewire{,-pulse}.service
+
+    doas pacman -S firefox
+}
+
+common
+$RUN_DEV && setup_dev_environment
+$RUN_DESKTOP && setup_desktop_environment
