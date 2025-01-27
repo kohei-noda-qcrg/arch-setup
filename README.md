@@ -16,7 +16,7 @@ curl -LO https://github.com/kohei-noda-qcrg/arch-setup/raw/main/00-disk-init-and
 
 # setup rootfs and bootloader
 curl -LO https://github.com/kohei-noda-qcrg/arch-setup/raw/main/01-setup-rootfs-and-bootloader
-./01-setup-rootfs-and-bootloader
+./01-setup-rootfs-and-bootloader --username archuser
 exit
 reboot
 
