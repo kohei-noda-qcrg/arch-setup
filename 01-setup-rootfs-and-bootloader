@@ -36,16 +36,6 @@ if [[ -z "${USERNAME:-}" ]]; then
     exit 1
 fi
 
-# setup yay
-pacman -S git go debugedit fakeroot make clang
-pushd /tmp
-if [[ ! -d yay ]]; then
-    git clone https://aur.archlinux.org/yay.git
-fi
-cd yay
-makepkg -si
-popd
-
 echo "set root password"
 passwd # root password
 # setup user

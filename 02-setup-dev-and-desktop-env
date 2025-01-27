@@ -37,6 +37,19 @@ for arg in "$@"; do
     esac
 done
 
+common() {
+    # setup yay
+    pacman -S git go debugedit fakeroot make clang
+    pushd /tmp
+    if [[ ! -d yay ]]; then
+        git clone https://aur.archlinux.org/yay.git
+    fi
+    cd yay
+    makepkg -si
+    yay -Syu
+    popd
+}
+
 setup_dev_environment() {
 
     yay -Sy
@@ -59,5 +72,6 @@ setup_desktop_environment() {
     doas pacman -S firefox
 }
 
+common
 $RUN_DEV && setup_dev_environment
 $RUN_DESKTOP && setup_desktop_environment
