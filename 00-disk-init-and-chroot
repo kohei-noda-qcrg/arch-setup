@@ -2,6 +2,8 @@
 
 set -eu
 
+PARENT=$(dirname "$0")
+
 DISK=""
 EFI_PARTITION=""
 ROOT_PARTITION=""
@@ -109,5 +111,10 @@ pacstrap -K "$MOUNT_POINT" base linux linux-firmware
 
 # Generate fstab
 genfstab -U "$MOUNT_POINT" >>/mnt/etc/fstab
+
+# Copy this script to the new system if it has another script
+if [[ -d "$PARENT/.git" ]]; then
+	cp -r "$PARENT" "$MOUNT_POINT"
+fi
 
 arch-chroot "$MOUNT_POINT"
