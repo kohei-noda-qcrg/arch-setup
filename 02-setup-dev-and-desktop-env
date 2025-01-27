@@ -48,9 +48,14 @@ common() {
     makepkg -si
     yay -Syu
     popd
+
+    doas pacman -S neovim nodejs npm
 }
 
 setup_dev_environment() {
+    doas pacman -S lldb # debugger
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # rust
+    . $HOME/.cargo/env
 
     yay -Sy
     yay -S github-cli
