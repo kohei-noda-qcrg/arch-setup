@@ -39,7 +39,7 @@ done
 
 common() {
     # setup yay
-    pacman -S git go debugedit fakeroot make clang
+    doas pacman -S git go debugedit fakeroot make clang
     pushd /tmp
     if [[ ! -d yay ]]; then
         git clone https://aur.archlinux.org/yay.git
