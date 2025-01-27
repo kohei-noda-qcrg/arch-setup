@@ -37,15 +37,6 @@ for arg in "$@"; do
     esac
 done
 
-common() {
-    doas pacman -S git go
-    pushd /tmp
-    git clone https://aur.archlinux.org/yay.git
-    cd yay
-    makepkg -si
-    popd
-}
-
 setup_dev_environment() {
 
     yay -Sy
@@ -68,6 +59,5 @@ setup_desktop_environment() {
     doas pacman -S firefox
 }
 
-common
 $RUN_DEV && setup_dev_environment
 $RUN_DESKTOP && setup_desktop_environment

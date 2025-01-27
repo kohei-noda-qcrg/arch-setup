@@ -14,7 +14,11 @@ USERNAME=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
     --username)
-        [[ -z ${2:-} ]] && (echo "Error: Argument required for $1"; show_help; exit 1)
+        [[ -z ${2:-} ]] && (
+            echo "Error: Argument required for $1"
+            show_help
+            exit 1
+        )
         USERNAME="$2"
         shift 2
         ;;
@@ -31,6 +35,17 @@ if [[ -z "${USERNAME:-}" ]]; then
     show_help
     exit 1
 fi
+
+# setup yay
+pacman -S git go debugedit fakeroot make clang
+pushd /tmp
+if [[ ! -d yay ]]; then
+    git clone https://aur.archlinux.org/yay.git
+fi
+cd yay
+makepkg -si
+popd
+
 echo "set root password"
 passwd # root password
 # setup user
