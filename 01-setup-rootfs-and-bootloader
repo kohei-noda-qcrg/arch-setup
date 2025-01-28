@@ -6,11 +6,13 @@ show_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  --username <USERNAME> Specify the username"
+    echo "  --wsl                 Skip setup not for wsl" 
     echo "  --help                Show this help message"
 }
 
 # get option --username "username"
 USERNAME=""
+WSL=false
 while [[ $# -gt 0 ]]; do
     case "$1" in
     --username)
@@ -21,6 +23,10 @@ while [[ $# -gt 0 ]]; do
         )
         USERNAME="$2"
         shift 2
+        ;;
+    --wsl)
+        WSL=true
+        shift
         ;;
     *)
         echo "Unknown option: $1"
@@ -55,21 +61,25 @@ echo "LANG=en_US.UTF-8" >/etc/locale.conf
 
 echo "${HOST}" >/etc/hostname
 
-# bootloader
-pacman -S grub os-prober efibootmgr
-echo "GRUB_DISABLE_OS_PROBER=false" >>/etc/default/grub
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
-grub-mkconfig -o /boot/grub/grub.cfg
-
-# dhcp
-pacman -S dhcpcd
-ip l
-read -p "Type nic: " NIC
-systemctl enable dhcpcd@${NIC}.service
-
 # doas
 pacman -S doas
 echo "permit persist :wheel" >>/etc/doas.conf
 chmod 0600 /etc/doas.conf
 
-echo "exit from chroot env, reboot and remove install disk"
+if $WSL; then
+    echo "WSL mode: Skipping bootloader and dhcp setup"
+else
+    # bootloader
+    pacman -S grub os-prober efibootmgr
+    echo "GRUB_DISABLE_OS_PROBER=false" >>/etc/default/grub
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+    grub-mkconfig -o /boot/grub/grub.cfg
+
+    # dhcp
+    pacman -S dhcpcd
+    ip l
+    read -p "Type nic: " NIC
+    systemctl enable dhcpcd@${NIC}.service
+
+    echo "exit from chroot env, reboot and remove install disk"
+fi
