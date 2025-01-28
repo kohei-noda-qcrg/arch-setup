@@ -46,18 +46,18 @@ common() {
     . "$HOME/.bashrc"
 
     # setup yay
-    doas pacman -S git go debugedit fakeroot make clang
+    doas pacman -S --noconfirm git go debugedit fakeroot make clang
     [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
     pushd /tmp/yay
     makepkg -si
-    yay -Syu
+    doas yay -Syu
     popd
 
-    doas pacman -S neovim nodejs npm
+    doas pacman -S --noconfirm neovim nodejs npm
 }
 
 setup_dev_environment() {
-    doas pacman -S lldb # debugger
+    doas pacman -S --noconfirm lldb # debugger
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # rust
     . $HOME/.cargo/env
 
@@ -68,24 +68,24 @@ setup_dev_environment() {
     uv tool update-shell
     uv python install --default --preview "$python3_ver"
 
-    yay -Sy
-    yay -S github-cli
+    doas yay -Sy
+    doas yay -S github-cli
 
     gh auth login
 }
 
 setup_desktop_environment() {
-    doas pacman -S noto-fonts-cjk fcitx5-im fcitx5-mozc
+    doas pacman -S --noconfirm noto-fonts-cjk fcitx5-im fcitx5-mozc
 
-    doas pacman -S alacritty sway xorg-xwayland qt5-wayland wl-clipboard
+    doas pacman -S --noconfirm alacritty sway xorg-xwayland qt5-wayland wl-clipboard
     mkdir -p ~/.config/sway
     sed 's/set \$term foot/set \$term alacritty/' /etc/sway/config >~/.config/sway/config
 
-    doas pacman -S pipewire pipewire-pulse
+    doas pacman -S --noconfirm pipewire pipewire-pulse
     systemctl --user --now enable pipewire{,-pulse}.{socket,service}
     systemctl --user start pipewire{,-pulse}.service
 
-    doas pacman -S firefox
+    doas pacman -S --noconfirm firefox
 }
 
 common
