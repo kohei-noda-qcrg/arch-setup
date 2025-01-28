@@ -4,7 +4,7 @@
 
 ```bash
 # install git
-pacman-key --init && pacman-key --populate archlinux && pamcan -Sy git
+pacman-key --init && pacman-key --populate archlinux && pacman -Sy git
 git clone https://github.com/kohei-noda-qcrg/arch-setup
 pushd arch-setup
 
