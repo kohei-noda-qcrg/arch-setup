@@ -67,7 +67,14 @@ echo "permit persist :wheel" >>/etc/doas.conf
 chmod 0600 /etc/doas.conf
 
 if $WSL; then
-    echo "WSL mode: Skipping bootloader and dhcp setup"
+    echo -e "[user]
+default=${USERNAME}
+
+[boot]
+systemd=true
+
+[network]
+hostname=Arch" >/etc/wsl.conf
 else
     # bootloader
     pacman -S grub os-prober efibootmgr
