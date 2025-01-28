@@ -38,13 +38,17 @@ for arg in "$@"; do
 done
 
 common() {
+    # dotfiles
+    dest_dotfiles="$HOME/.config/dotfiles"
+    [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
+    GIT_USERNAME=${GIT_USERNAME:-} GIT_EMAIL=${GIT_EMAIL:-} "$dest_dotfiles/pre-setup"
+    "$dest_dotfiles/setup"
+    . "$HOME/.bashrc"
+
     # setup yay
     doas pacman -S git go debugedit fakeroot make clang
-    pushd /tmp
-    if [[ ! -d yay ]]; then
-        git clone https://aur.archlinux.org/yay.git
-    fi
-    cd yay
+    [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
+    pushd /tmp/yay
     makepkg -si
     yay -Syu
     popd
@@ -61,8 +65,8 @@ setup_dev_environment() {
     curl -LsSf https://astral.sh/uv/install.sh | sh
     . $HOME/.local/bin/env
     python3_ver="3.13"
-	uv tool update-shell
-	uv python install --default --preview "$python3_ver"
+    uv tool update-shell
+    uv python install --default --preview "$python3_ver"
 
     yay -Sy
     yay -S github-cli
