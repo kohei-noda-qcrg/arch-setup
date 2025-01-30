@@ -84,9 +84,22 @@ else
 
     # dhcp
     pacman -S dhcpcd
-    ip l
-    read -p "Type nic: " NIC
-    systemctl enable dhcpcd@${NIC}.service
+    while true; do
+      ip l
+      interface_count=$(ip l | grep -E "^[0-9]+:" | wc -l)
+      echo "Please select a number between 1 and $interface_count:"
+      read -r number
+    
+      if [[ "$number" =~ ^[0-9]+$ ]] && [ "$number" -ge 1 ] && [ "$number" -le "$interface_count" ]; then
+    	interface=$(ip l | grep -E "^${number}: " | awk '{print $2}' | sed 's/.$//')
+    	echo ${interface}
+        sudo systemctl enable "dhcpcd@${interface}.service"
+        echo "Enabled dhcpcd@${interface}.service"
+        break
+      else
+        echo "Invalid input. Please select a number between 1 and $interface_count."
+      fi
+    done
 
     echo "exit from chroot env, reboot and remove install disk"
 fi
