@@ -55,6 +55,10 @@ common() {
     popd
 
     doas pacman -S --noconfirm neovim nodejs npm less man-db
+
+    # fzf
+    git clone https://github.com/junegunn/fzf $HOME/.local/share/fzf
+    $HOME/.local/share/fzf/install --key-bindings --completion --no-update-rc --xdg
 }
 
 setup_dev_environment() {
