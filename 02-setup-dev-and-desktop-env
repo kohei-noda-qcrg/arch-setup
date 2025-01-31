@@ -81,7 +81,6 @@ setup_desktop_environment() {
 
     doas pacman -S --noconfirm alacritty sway xorg-xwayland qt5-wayland wl-clipboard
     mkdir -p ~/.config/sway
-    sed 's/set \$term foot/set \$term alacritty/' /etc/sway/config >~/.config/sway/config
 
     doas pacman -S --noconfirm pipewire pipewire-pulse
     systemctl --user --now enable pipewire{,-pulse}.{socket,service}
