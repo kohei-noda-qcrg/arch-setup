@@ -93,7 +93,7 @@ else
       if [[ "$number" =~ ^[0-9]+$ ]] && [ "$number" -ge 1 ] && [ "$number" -le "$interface_count" ]; then
     	interface=$(ip l | grep -E "^${number}: " | awk '{print $2}' | sed 's/.$//')
     	echo ${interface}
-        sudo systemctl enable "dhcpcd@${interface}.service"
+        systemctl enable "dhcpcd@${interface}.service"
         echo "Enabled dhcpcd@${interface}.service"
         break
       else
