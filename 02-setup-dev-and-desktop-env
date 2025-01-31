@@ -51,7 +51,7 @@ common() {
     [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
     pushd /tmp/yay
     makepkg -si
-    doas yay -Syu
+    doas yay -Syu --noconfirm
     popd
 
     doas pacman -S --noconfirm neovim nodejs npm less man-db
@@ -69,8 +69,8 @@ setup_dev_environment() {
     uv tool update-shell
     uv python install --default --preview "$python3_ver"
 
-    doas yay -Sy
-    doas yay -S github-cli
+    doas yay -Sy --noconfirm
+    doas yay -S --noconfirm github-cli
 
     gh auth login
 }

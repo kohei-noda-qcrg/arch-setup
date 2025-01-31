@@ -62,12 +62,12 @@ echo "LANG=en_US.UTF-8" >/etc/locale.conf
 echo "${HOST}" >/etc/hostname
 
 # doas
-pacman -S doas
+pacman -S --noconfirm doas
 echo "permit persist :wheel" >>/etc/doas.conf
 chmod 0600 /etc/doas.conf
 
 # key remap
-pacman -S keyd
+pacman -S --noconfirm keyd
 systemctl enable keyd
 echo -e "[ids]\n\n*\n\n[main]\n\ncapslock = overload(control, esc)" > /etc/keyd/default.conf
 
@@ -83,13 +83,13 @@ systemd=true
 hostname=Arch" >/etc/wsl.conf
 else
     # bootloader
-    pacman -S grub os-prober efibootmgr
+    pacman -S --noconfirm grub os-prober efibootmgr
     echo "GRUB_DISABLE_OS_PROBER=false" >>/etc/default/grub
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
     grub-mkconfig -o /boot/grub/grub.cfg
 
     # dhcp
-    pacman -S dhcpcd
+    pacman -S --noconfirm dhcpcd
     while true; do
       ip l
       interface_count=$(ip l | grep -E "^[0-9]+:" | wc -l)
