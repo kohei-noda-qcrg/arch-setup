@@ -54,7 +54,7 @@ common() {
     doas yay -Syu
     popd
 
-    doas pacman -S --noconfirm neovim nodejs npm
+    doas pacman -S --noconfirm neovim nodejs npm less man-db
 }
 
 setup_dev_environment() {
