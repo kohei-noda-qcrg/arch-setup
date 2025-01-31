@@ -6,7 +6,7 @@ show_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  --username <USERNAME> Specify the username"
-    echo "  --wsl                 Skip setup not for wsl" 
+    echo "  --wsl                 Skip setup not for wsl"
     echo "  --help                Show this help message"
 }
 
@@ -66,6 +66,12 @@ pacman -S doas
 echo "permit persist :wheel" >>/etc/doas.conf
 chmod 0600 /etc/doas.conf
 
+# key remap
+pacman -S keyd
+systemctl enable keyd
+echo -e "[ids]\n\n*\n\n[main]\n\ncapslock = overload(control, esc)" > /etc/keyd/default.conf
+
+
 if $WSL; then
     echo -e "[user]
 default=${USERNAME}
@@ -89,7 +95,7 @@ else
       interface_count=$(ip l | grep -E "^[0-9]+:" | wc -l)
       echo "Please select a number between 1 and $interface_count:"
       read -r number
-    
+
       if [[ "$number" =~ ^[0-9]+$ ]] && [ "$number" -ge 1 ] && [ "$number" -le "$interface_count" ]; then
     	interface=$(ip l | grep -E "^${number}: " | awk '{print $2}' | sed 's/.$//')
     	echo ${interface}
