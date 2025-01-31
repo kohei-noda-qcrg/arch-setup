@@ -70,7 +70,7 @@ setup_dev_environment() {
     uv python install --default --preview "$python3_ver"
 
     doas yay -Sy --noconfirm
-    doas yay -S --noconfirm github-cli
+    doas yay -S --noconfirm github-cli pkg-config
 
     gh auth login
 }
