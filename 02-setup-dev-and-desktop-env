@@ -2,6 +2,7 @@
 
 set -eu
 
+SCRIPT_PATH=$(cd $(dirname $0); pwd)
 RUN_DEV=true
 RUN_DESKTOP=true
 
@@ -76,6 +77,7 @@ setup_dev_environment() {
 
 setup_desktop_environment() {
     doas pacman -S --noconfirm noto-fonts-cjk fcitx5-im fcitx5-mozc
+    cat "${SCRIPT_PATH}/files/etc/environment" | doas tee -a /etc/environment
 
     doas pacman -S --noconfirm alacritty sway xorg-xwayland qt5-wayland wl-clipboard
     mkdir -p ~/.config/sway
