@@ -62,6 +62,7 @@ common() {
 }
 
 setup_dev_environment() {
+    doas pacman -S --noconfirm cmake
     doas pacman -S --noconfirm lldb # debugger
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # rust
     . $HOME/.cargo/env
