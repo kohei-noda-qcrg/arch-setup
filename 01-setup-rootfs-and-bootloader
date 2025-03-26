@@ -49,12 +49,12 @@ useradd -m -g users -G wheel -s /bin/bash "$USERNAME"
 echo "set ${USERNAME} password"
 passwd "$USERNAME"
 
-REGION=ASIA
+REGION=Asia
 CITY=Tokyo
 HOST=arch
 ln -sf /usr/share/zoneinfo/${REGION}/${CITY}
 hwclock --systohc
-timedatectl set-timezone ${REGION}/${CITY}
+[ ! $WSL ] && timedatectl set-timezone ${REGION}/${CITY}
 
 echo -e "en_US.UTF-8 UTF-8\nja_JP.UTF-8 UTF8" >>/etc/locale.gen
 locale-gen
