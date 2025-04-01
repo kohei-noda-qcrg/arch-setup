@@ -82,6 +82,25 @@ systemd=true
 
 [network]
 hostname=Arch" >/etc/wsl.conf
+
+su $USERNAME
+mkdir -p "${HOME}/.config/systemd/user"
+cat <<"EOF" > "${HOME}/.config/systemd/user/wsl-wayland-symlink.service"
+[Unit]
+Description=Create Wayland symlinks for WSL
+After=default.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'USER_ID=$(id -u); find /mnt/wslg/runtime-dir -name "wayland-*" -type s -exec ln -sf {} /run/user/$USER_ID/ \;'
+
+[Install]
+WantedBy=default.target
+EOF
+systemctl --user daemon-reload
+systemctl --user enable wsl-wayland-symlink.service
+systemctl --user start wsl-wayland-symlink.service
+
 else
     # bootloader
     pacman -S --noconfirm grub os-prober efibootmgr
