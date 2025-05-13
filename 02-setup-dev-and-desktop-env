@@ -2,7 +2,7 @@
 
 set -eu
 
-SCRIPT_PATH=$(cd $(dirname $0); pwd)
+SCRIPT_PATH=$(cd "$(dirname "$0")"; pwd)
 RUN_DEV=true
 RUN_DESKTOP=true
 
