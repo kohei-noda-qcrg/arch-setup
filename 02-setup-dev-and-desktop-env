@@ -2,7 +2,7 @@
 
 set -eu
 
-SCRIPT_PATH=$(cd $(dirname $0); pwd)
+SCRIPT_PATH=$(cd "$(dirname "$0")"; pwd)
 RUN_DEV=true
 RUN_DESKTOP=true
 
@@ -77,7 +77,9 @@ setup_dev_environment() {
     doas yay -Sy --noconfirm
     doas yay -S --noconfirm github-cli pkg-config
 
-    gh auth login
+    if ! ${CI:-false}; then
+        gh auth login
+    fi
 }
 
 setup_desktop_environment() {
