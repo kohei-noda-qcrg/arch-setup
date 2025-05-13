@@ -1,0 +1,23 @@
+name: test
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged -v ${{ github.workspace }}:/github/workspace
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Update system
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm git
+
+      - name: run test
+        run: GIT_USERNAME=test GIT_EMAIL=test@test.com /github/workspace/02-setup-dev-and-desktop-env
