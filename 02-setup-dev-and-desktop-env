@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -eux
 
 SCRIPT_PATH=$(cd "$(dirname "$0")"; pwd)
 RUN_DEV=true
@@ -43,8 +43,13 @@ common() {
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
-    GIT_USERNAME=${GIT_USERNAME:-} GIT_EMAIL=${GIT_EMAIL:-} "$dest_dotfiles/pre-setup"
-    "$dest_dotfiles/setup"
+    # if CI is true, add --yes option
+    PRESETUP_OPTION=""
+    if [ "${CI:-false}" = true ]; then
+        PRESETUP_OPTION="--yes"
+    fi
+    GIT_USERNAME=${GIT_USERNAME:-} GIT_EMAIL=${GIT_EMAIL:-} bash -x "$dest_dotfiles/pre-setup" $PRESETUP_OPTION
+    bash -x "$dest_dotfiles/setup"
     . "$HOME/.bashrc"
 
     # setup yay
