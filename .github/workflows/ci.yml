@@ -17,7 +17,12 @@ jobs:
         run: |
           pacman-key --init
           pacman-key --populate archlinux
-          pacman -Syu --noconfirm git
+          pacman -Syu --noconfirm git doas coreutils
+          useradd -m -g users -G wheel -s /bin/bash test
+          echo test | passwd -s test
+          echo "permit nopass test" >>/etc/doas.conf
+          echo "permit nopass root" >>/etc/doas.conf
+          chmod 0600 /etc/doas.conf
 
       - name: run test
-        run: GIT_USERNAME=test GIT_EMAIL=test@test.com /github/workspace/02-setup-dev-and-desktop-env
+        run: doas -u test env CI=true GIT_USERNAME=test GIT_EMAIL=test@test.com /github/workspace/02-setup-dev-and-desktop-env

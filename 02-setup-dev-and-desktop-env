@@ -44,7 +44,7 @@ common() {
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
     # if CI is true, add --yes option
-    PRESETUP_OPTION=""
+    PRESETUP_OPTION=${PRESETUP_OPTION:-}
     if [ "${CI:-false}" = true ]; then
         PRESETUP_OPTION="--yes"
     fi
