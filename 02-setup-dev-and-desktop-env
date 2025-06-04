@@ -69,10 +69,7 @@ setup_dev_environment() {
 
     # uv Python package manager
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    . $HOME/.local/bin/env
-    python3_ver="3.13"
-    uv tool update-shell
-    uv python install --default --preview "$python3_ver"
+    doas pacman -S --noconfirm python python-pip
 
     doas yay -Sy --noconfirm
     doas yay -S --noconfirm github-cli pkg-config
