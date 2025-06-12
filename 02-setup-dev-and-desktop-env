@@ -81,7 +81,7 @@ setup_desktop_environment() {
     doas pacman -S --noconfirm noto-fonts-cjk fcitx5-im fcitx5-mozc
     cat "${SCRIPT_PATH}/files/etc/environment" | doas tee -a /etc/environment
 
-    doas pacman -S --noconfirm alacritty sway xorg-xwayland qt5-wayland wl-clipboard
+    doas pacman -S --noconfirm alacritty hyprland hyprshot waybar wofi xorg-xwayland qt5-wayland wl-clipboard
     mkdir -p ~/.config/sway
 
     doas pacman -S --noconfirm pipewire pipewire-pulse
