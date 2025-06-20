@@ -53,7 +53,7 @@ common() {
     [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
     pushd /tmp/yay
     makepkg -si
-    doas yay -Syu --noconfirm
+    doas yay -Syu --noconfirm --sudo doas
     popd
 
     # fzf
@@ -71,8 +71,8 @@ setup_dev_environment() {
     curl -LsSf https://astral.sh/uv/install.sh | sh
     doas pacman -S --noconfirm python python-pip
 
-    doas yay -Sy --noconfirm
-    doas yay -S --noconfirm github-cli pkg-config
+    doas yay -Sy --noconfirm --sudo doas
+    doas yay -S --noconfirm github-cli pkg-config --sudo doas
 
     gh auth login
 }
