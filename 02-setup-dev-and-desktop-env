@@ -40,7 +40,7 @@ done
 
 common() {
 
-    doas pacman -S --noconfirm git nodejs neovim less which man-db
+    doas pacman -S --noconfirm git nodejs npm neovim less which man-db
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
