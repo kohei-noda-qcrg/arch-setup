@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eu
+
+# sadly, hyprland requires NVIDIA proprietary drivers
+# when using NVIDIA GPUs, so we need to install them
+
+doas pacman -S --noconfirm nvidia-dkms nvidia-utils linux-headers
+doas bash -c 'echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia.conf'
+doas sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_drm nvidia_uvm /' /etc/mkinitcpio.conf
+doas mkinitcpio -P
+doas dkms autoinstall
+
+echo "NVIDIA proprietary drivers installed successfully."
+echo "Note: you need to add 'nvidia-drm.modeset=1' to your kernel parameters."
+echo "Please reboot your system to apply the changes."
