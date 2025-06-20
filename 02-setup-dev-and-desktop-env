@@ -39,6 +39,8 @@ for arg in "$@"; do
 done
 
 common() {
+
+    doas pacman -S --noconfirm git nodejs neovim less which man-db
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
@@ -53,8 +55,6 @@ common() {
     makepkg -si
     doas yay -Syu --noconfirm
     popd
-
-    doas pacman -S --noconfirm neovim less man-db
 
     # fzf
     git clone https://github.com/junegunn/fzf $HOME/.local/share/fzf
