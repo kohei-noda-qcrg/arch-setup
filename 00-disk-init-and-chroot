@@ -120,8 +120,8 @@ fi
 
 # bootloader
 pacman -S --noconfirm limine efibootmgr
-mkdir -p /boot/EFI/BOOT
-LIMINE_SHARE=/usr/share/limine
+mkdir -p $MOUNT_POINT/boot/EFI/BOOT
+LIMINE=/usr/share/limine
 ## bios
 #cp "$LIMINE/limine-bios.sys" /$MOUNT_POINT/boot/
 #limine bios-install $(findmnt -n /mnt/boot | awk '{print $2}')
@@ -130,6 +130,6 @@ ARCH=${ARCH:-X64}
 cp "$LIMINE/BOOT${ARCH}.EFI" $MOUNT_POINT/boot/EFI/BOOT
 ## limine config
 cp "$SCRIPT_PATH/files/boot/limine.conf" $MOUNT_POINT/boot/limine.conf
-echo "cmdline: root=PARTUUID=$(blkid -s value -o PARTUUID $ROOT_PARTITION) rw loglevel=7" >> $MOUNT_POINT/boot/limine.conf
+echo -e "\tcmdline: root=PARTUUID=$(blkid -o value -s PARTUUID $ROOT_PARTITION) rw loglevel=7" >> $MOUNT_POINT/boot/limine.conf
 
 arch-chroot "$MOUNT_POINT"
