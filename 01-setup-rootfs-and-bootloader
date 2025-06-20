@@ -102,11 +102,6 @@ systemctl --user enable wsl-wayland-symlink.service
 systemctl --user start wsl-wayland-symlink.service
 
 else
-    # bootloader
-    pacman -S --noconfirm grub os-prober efibootmgr
-    echo "GRUB_DISABLE_OS_PROBER=false" >>/etc/default/grub
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
-    grub-mkconfig -o /boot/grub/grub.cfg
 
     # dhcp
     pacman -S --noconfirm dhcpcd
