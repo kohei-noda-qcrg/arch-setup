@@ -2,7 +2,7 @@
 
 set -eu
 
-PARENT=$(dirname "$0")
+SCRIPT_PATH=$(cd $(dirname $0); pwd)
 
 DISK=""
 EFI_PARTITION=""
@@ -113,9 +113,23 @@ pacstrap -K "$MOUNT_POINT" base linux linux-firmware
 genfstab -U "$MOUNT_POINT" >>/mnt/etc/fstab
 
 # Copy this script to the new system if it has another script
-if [[ -d "$PARENT/.git" ]]; then
+if [[ -d "$SCRIPT_PATH/.git" ]]; then
 	mkdir -p "$MOUNT_POINT/arch-setup"
-	cp -r "$PARENT" "$MOUNT_POINT/arch-setup"
+	cp -r "$SCRIPT_PATH" "$MOUNT_POINT/arch-setup"
 fi
+
+# bootloader
+pacman -S --noconfirm limine efibootmgr
+mkdir -p /boot/EFI/BOOT
+LIMINE_SHARE=/usr/share/limine
+## bios
+#cp "$LIMINE/limine-bios.sys" /$MOUNT_POINT/boot/
+#limine bios-install $(findmnt -n /mnt/boot | awk '{print $2}')
+## uefi
+ARCH=${ARCH:-X64}
+cp "$LIMINE/BOOT${ARCH}.EFI" $MOUNT_POINT/boot/EFI/BOOT
+## limine config
+cp "$SCRIPT_PATH/files/boot/limine.conf" $MOUNT_POINT/boot/limine.conf
+echo "cmdline: root=PARTUUID=$(blkid -s value -o PARTUUID $ROOT_PARTITION) rw loglevel=7" >> $MOUNT_POINT/boot/limine.conf
 
 arch-chroot "$MOUNT_POINT"
