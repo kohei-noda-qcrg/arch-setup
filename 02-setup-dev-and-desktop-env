@@ -89,6 +89,7 @@ setup_desktop_environment() {
     systemctl --user start pipewire{,-pulse}.service
 
     doas pacman -S --noconfirm firefox
+    doas pacman -S --noconfirm xdg-desktop-portal-hyprland # for screen share
 }
 
 common
