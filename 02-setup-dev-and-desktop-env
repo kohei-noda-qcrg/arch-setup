@@ -52,8 +52,7 @@ common() {
     doas pacman -S --noconfirm git go debugedit fakeroot make clang
     [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
     pushd /tmp/yay
-    makepkg -si
-    doas yay -Syu --noconfirm --sudo doas
+    makepkg -si --noconfirm
     popd
 
     # fzf
