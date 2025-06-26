@@ -17,9 +17,8 @@ jobs:
         run: |
           pacman-key --init
           pacman-key --populate archlinux
-          pacman -Syu --noconfirm git doas coreutils
+          pacman -Syu --noconfirm git doas coreutils shadow
           useradd -m -g users -G wheel -s /bin/bash test
-          echo test | passwd -s test
           echo "permit nopass test" >>/etc/doas.conf
           echo "permit nopass root" >>/etc/doas.conf
           chmod 0600 /etc/doas.conf
