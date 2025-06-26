@@ -70,10 +70,7 @@ setup_dev_environment() {
     curl -LsSf https://astral.sh/uv/install.sh | sh
     doas pacman -S --noconfirm python python-pip
 
-    doas yay -Sy --noconfirm --sudo doas
-    doas yay -S --noconfirm github-cli pkg-config --sudo doas
-
-    gh auth login
+    doas pacman -S --noconfirm github-cli pkgconf
 }
 
 setup_desktop_environment() {
