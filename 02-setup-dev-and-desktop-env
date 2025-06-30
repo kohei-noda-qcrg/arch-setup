@@ -55,8 +55,11 @@ common() {
     popd
 
     # fzf
-    git clone https://github.com/junegunn/fzf $HOME/.local/share/fzf
-    $HOME/.local/share/fzf/install --key-bindings --completion --no-update-rc --xdg
+    FZFDIR="$HOME/.local/share/fzf"
+    if [ ! -d "$FZFDIR" ]; then
+        git clone https://github.com/junegunn/fzf $FZFDIR
+        $FZFDIR/install --key-bindings --completion --no-update-rc --xdg
+    fi
 }
 
 setup_dev_environment() {
