@@ -39,7 +39,6 @@ for arg in "$@"; do
 done
 
 common() {
-
     doas pacman -S --noconfirm git nodejs npm neovim less which man-db
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
@@ -70,7 +69,7 @@ setup_dev_environment() {
     curl -LsSf https://astral.sh/uv/install.sh | sh
     doas pacman -S --noconfirm python python-pip
 
-    doas pacman -S --noconfirm github-cli glab pkgconf
+    doas pacman -S --noconfirm github-cli glab pkgconf zellij
 }
 
 setup_desktop_environment() {
