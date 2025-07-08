@@ -76,7 +76,7 @@ common() {
 setup_dev_environment() {
     doas pacman -S --noconfirm cmake diffutils patch
     doas pacman -S --noconfirm lldb gdb # debugger
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # rust
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y # rust
     . $HOME/.cargo/env
 
     # uv Python package manager
