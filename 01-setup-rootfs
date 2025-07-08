@@ -105,19 +105,37 @@ else
     # dhcp
     pacman -S --noconfirm dhcpcd
     while true; do
-      ip l
-      interface_count=$(ip l | grep -E "^[0-9]+:" | wc -l)
-      echo "Please select a number between 1 and $interface_count:"
+      valid_numbers=()
+      declare -A num_to_iface
+
+      mapfile -t interface_lines < <(ip -o l)
+      for line in "${interface_lines[@]}"; do
+        num=$(echo "$line" | awk -F: '{print $1}')
+        iface=$(echo "$line" | awk -F': ' '{print $2}' | awk '{print $1}')
+        valid_numbers+=("$num")
+        num_to_iface["$num"]="$iface"
+      done
+
+      echo "Available intefaces:"
+      for num in "${valid_numbers[@]}"; do
+        echo "  $num) ${num_to_iface[$num]}"
+      done
+      echo "  c) Cancel to setup dhcpcd"
+
+      echo "Please select a number from the list above (or 'c' to cancel):"
       read -r number
 
-      if [[ "$number" =~ ^[0-9]+$ ]] && [ "$number" -ge 1 ] && [ "$number" -le "$interface_count" ]; then
-    	interface=$(ip l | grep -E "^${number}: " | awk '{print $2}' | sed 's/.$//')
-    	echo ${interface}
+      if [[ "$number" == "c" ]]; then
+        echo "Cancelled to setup dhcpcd by user."
+        break
+      elif [[ " ${valid_numbers[*]} " =~ " $number " ]]; then
+        interface="${num_to_iface[$number]}"
+        echo "Selected interface: $interface"
         systemctl enable "dhcpcd@${interface}.service"
         echo "Enabled dhcpcd@${interface}.service"
         break
       else
-        echo "Invalid input. Please select a number between 1 and $interface_count."
+        echo "Invalid input. Please select one of: ${valid_numbers[*]} c"
       fi
     done
 
