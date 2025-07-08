@@ -49,8 +49,14 @@ common() {
 
     # setup yay
     doas pacman -S --noconfirm git go debugedit fakeroot make clang
+    ## update /etc/makepkg.conf
+    doas cp /etc/makepkg.conf /etc/makepkg.conf.bak
+    grep -q '^PACMAN_AUTH=' /etc/makepkg.conf && sudo sed -i 's|^PACMAN_AUTH=.*|PACMAN_AUTH=(doas)|' /etc/makepkg.conf \
+    || echo 'PACMAN_AUTH=(doas)' | sudo tee -a /etc/makepkg.conf
+    ## clone yay
     [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
     pushd /tmp/yay
+    ## build and install yay
     makepkg -si --noconfirm
     popd
 
