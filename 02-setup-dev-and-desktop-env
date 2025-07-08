@@ -95,8 +95,10 @@ setup_desktop_environment() {
     mkdir -p ~/.config/sway
 
     doas pacman -S --noconfirm pipewire pipewire-pulse
-    systemctl --user --now enable pipewire{,-pulse}.{socket,service}
-    systemctl --user start pipewire{,-pulse}.service
+    if [ "${CI:-false}" = false ]; then
+      systemctl --user --now enable pipewire{,-pulse}.{socket,service}
+      systemctl --user start pipewire{,-pulse}.service
+    fi
 
     doas pacman -S --noconfirm firefox
     doas pacman -S --noconfirm xdg-desktop-portal-hyprland # for screen share
