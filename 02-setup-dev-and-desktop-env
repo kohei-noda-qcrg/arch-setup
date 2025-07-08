@@ -6,6 +6,8 @@ SCRIPT_PATH=$(cd $(dirname $0); pwd)
 RUN_DEV=true
 RUN_DESKTOP=true
 
+CI=${CI:-false} # need to be enabled only CI env
+
 # Function to display help message
 show_help() {
     echo "Usage: $0 [options]"
@@ -43,7 +45,10 @@ common() {
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
-    GIT_USERNAME=${GIT_USERNAME:-} GIT_EMAIL=${GIT_EMAIL:-} "$dest_dotfiles/pre-setup"
+    if "${CI}"; then
+        PRESETUP_OPTION="--yes"
+    fi
+    GIT_USERNAME=${GIT_USERNAME:-} GIT_EMAIL=${GIT_EMAIL:-} "$dest_dotfiles/pre-setup" $PRESETUP_OPTION
     "$dest_dotfiles/setup"
     . "$HOME/.bashrc"
 
@@ -90,8 +95,10 @@ setup_desktop_environment() {
     mkdir -p ~/.config/sway
 
     doas pacman -S --noconfirm pipewire pipewire-pulse
-    systemctl --user --now enable pipewire{,-pulse}.{socket,service}
-    systemctl --user start pipewire{,-pulse}.service
+	if ! "${CI}"; then
+        systemctl --user --now enable pipewire{,-pulse}.{socket,service}
+        systemctl --user start pipewire{,-pulse}.service
+	fi
 
     doas pacman -S --noconfirm firefox
     doas pacman -S --noconfirm xdg-desktop-portal-hyprland # for screen share
