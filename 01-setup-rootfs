@@ -69,8 +69,7 @@ chmod 0600 /etc/doas.conf
 # key remap
 pacman -S --noconfirm keyd
 systemctl enable keyd
-echo -e "[ids]\n\n*\n\n[main]\n\ncapslock = overload(control, esc)" > /etc/keyd/default.conf
-
+echo -e "[ids]\n\n*\n\n[main]\n\ncapslock = overload(control, esc)" >/etc/keyd/default.conf
 
 if $WSL; then
     echo -e "[user]
@@ -82,9 +81,10 @@ systemd=true
 [network]
 hostname=Arch" >/etc/wsl.conf
 
-su $USERNAME
-mkdir -p "${HOME}/.config/systemd/user"
-cat <<"EOF" > "${HOME}/.config/systemd/user/wsl-wayland-symlink.service"
+    su $USERNAME
+    mkdir -p "${HOME}/.config/systemd/user"
+
+    cat <<"EOF" >"${HOME}/.config/systemd/user/wsl-wayland-symlink.service"
 [Unit]
 Description=Create Wayland symlinks for WSL
 After=default.target
@@ -96,47 +96,47 @@ ExecStart=/bin/sh -c 'USER_ID=$(id -u); find /mnt/wslg/runtime-dir -name "waylan
 [Install]
 WantedBy=default.target
 EOF
-systemctl --user daemon-reload
-systemctl --user enable wsl-wayland-symlink.service
-systemctl --user start wsl-wayland-symlink.service
+    systemctl --user daemon-reload
+    systemctl --user enable wsl-wayland-symlink.service
+    systemctl --user start wsl-wayland-symlink.service
 
 else
 
     # dhcp
     pacman -S --noconfirm dhcpcd
     while true; do
-      valid_numbers=()
-      declare -A num_to_iface
+        valid_numbers=()
+        declare -A num_to_iface
 
-      mapfile -t interface_lines < <(ip -o l)
-      for line in "${interface_lines[@]}"; do
-        num=$(echo "$line" | awk -F: '{print $1}')
-        iface=$(echo "$line" | awk -F': ' '{print $2}' | awk '{print $1}')
-        valid_numbers+=("$num")
-        num_to_iface["$num"]="$iface"
-      done
+        mapfile -t interface_lines < <(ip -o l)
+        for line in "${interface_lines[@]}"; do
+            num=$(echo "$line" | awk -F: '{print $1}')
+            iface=$(echo "$line" | awk -F': ' '{print $2}' | awk '{print $1}')
+            valid_numbers+=("$num")
+            num_to_iface["$num"]="$iface"
+        done
 
-      echo "Available intefaces:"
-      for num in "${valid_numbers[@]}"; do
-        echo "  $num) ${num_to_iface[$num]}"
-      done
-      echo "  c) Cancel to setup dhcpcd"
+        echo "Available intefaces:"
+        for num in "${valid_numbers[@]}"; do
+            echo "  $num) ${num_to_iface[$num]}"
+        done
+        echo "  c) Cancel to setup dhcpcd"
 
-      echo "Please select a number from the list above (or 'c' to cancel):"
-      read -r number
+        echo "Please select a number from the list above (or 'c' to cancel):"
+        read -r number
 
-      if [[ "$number" == "c" ]]; then
-        echo "Cancelled to setup dhcpcd by user."
-        break
-      elif [[ " ${valid_numbers[*]} " =~ " $number " ]]; then
-        interface="${num_to_iface[$number]}"
-        echo "Selected interface: $interface"
-        systemctl enable "dhcpcd@${interface}.service"
-        echo "Enabled dhcpcd@${interface}.service"
-        break
-      else
-        echo "Invalid input. Please select one of: ${valid_numbers[*]} c"
-      fi
+        if [[ "$number" == "c" ]]; then
+            echo "Cancelled to setup dhcpcd by user."
+            break
+        elif [[ " ${valid_numbers[*]} " =~ " $number " ]]; then
+            interface="${num_to_iface[$number]}"
+            echo "Selected interface: $interface"
+            systemctl enable "dhcpcd@${interface}.service"
+            echo "Enabled dhcpcd@${interface}.service"
+            break
+        else
+            echo "Invalid input. Please select one of: ${valid_numbers[*]} c"
+        fi
     done
 
     echo "exit from chroot env, reboot and remove install disk"

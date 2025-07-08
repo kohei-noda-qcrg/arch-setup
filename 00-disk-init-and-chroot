@@ -2,80 +2,83 @@
 
 set -eu
 
-SCRIPT_PATH=$(cd $(dirname $0); pwd)
+SCRIPT_PATH=$(
+    cd $(dirname $0)
+    pwd
+)
 
 DISK=""
 EFI_PARTITION=""
 ROOT_PARTITION=""
 
 show_help() {
-	echo "Usage: $0 [options]"
-	echo "Options:"
-	echo "  --initialize <DISK> Initialize the disk (warning: this will erase all data on <DISK>)"
-	echo "  --efi <PARTITION>   Specify the EFI partition (e.g. /dev/sda1)"
-	echo "  --root <PARTITION>  Specify the root partition (e.g. /dev/sda2)"
-	echo "  --help              Show this help message"
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  --initialize <DISK> Initialize the disk (warning: this will erase all data on <DISK>)"
+    echo "  --efi <PARTITION>   Specify the EFI partition (e.g. /dev/sda1)"
+    echo "  --root <PARTITION>  Specify the root partition (e.g. /dev/sda2)"
+    echo "  --help              Show this help message"
 }
 
 get_partition_suffix() {
-	local disk=$1
-	if [[ $disk =~ ^/dev/(nvme|mmcblk) ]]; then
-		echo "p"
-	else
-		echo ""
-	fi
+    local disk=$1
+    if [[ $disk =~ ^/dev/(nvme|mmcblk) ]]; then
+        echo "p"
+    else
+        echo ""
+    fi
 }
 
 error_arg_required() {
-	echo "Error: Argument required for $1"
-	show_help
-	exit 1
+    echo "Error: Argument required for $1"
+    show_help
+    exit 1
 }
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-	arg="$1"
-	case $arg in
-	--initialize)
-		[[ -z ${2:-} ]] && error_arg_required "$arg"
-		DISK="$2"
-		shift 2
-		;;
-	--efi)
-		[[ -z ${2:-} ]] && error_arg_required "$arg"
-		EFI_PARTITION="$2"
-		shift 2
-		;;
-	--root)
-		[[ -z ${2:-} ]] && error_arg_required "$arg"
-		ROOT_PARTITION="$2"
-		shift 2
-		;;
-	--help)
-		show_help
-		exit 0
-		;;
-	*)
-		echo "Unknown option: $arg"
-		show_help
-		exit 1
-		;;
-	esac
+    arg="$1"
+    case $arg in
+    --initialize)
+        [[ -z ${2:-} ]] && error_arg_required "$arg"
+        DISK="$2"
+        shift 2
+        ;;
+    --efi)
+        [[ -z ${2:-} ]] && error_arg_required "$arg"
+        EFI_PARTITION="$2"
+        shift 2
+        ;;
+    --root)
+        [[ -z ${2:-} ]] && error_arg_required "$arg"
+        ROOT_PARTITION="$2"
+        shift 2
+        ;;
+    --help)
+        show_help
+        exit 0
+        ;;
+    *)
+        echo "Unknown option: $arg"
+        show_help
+        exit 1
+        ;;
+    esac
 done
 
 # Validate arguments
 if [[ $DISK == "" && $EFI_PARTITION == "" && $ROOT_PARTITION == "" ]]; then
-	echo "Error: At least one of --initialize, --efi, or --root must be specified."
-	show_help
-	exit 1
+    echo "Error: At least one of --initialize, --efi, or --root must be specified."
+    show_help
+    exit 1
 elif [[ $DISK != "" && ($EFI_PARTITION != "" || $ROOT_PARTITION != "") ]]; then
-	echo "Error: --initialize cannot be used with --efi or --root."
-	show_help
-	exit 1
+    echo "Error: --initialize cannot be used with --efi or --root."
+    show_help
+    exit 1
 elif [[ $DISK == "" && ($EFI_PARTITION == "" || $ROOT_PARTITION == "") ]]; then
-	echo "Error: Both --efi and --root must be specified if --initialize is not used."
-	show_help
-	exit 1
+    echo "Error: Both --efi and --root must be specified if --initialize is not used."
+    show_help
+    exit 1
 fi
 
 # Validate disk and partitions
@@ -97,23 +100,23 @@ fi
 
 # Initialize disk if requested
 if [[ $DISK != "" ]]; then
-	echo "Warning: This script will overwrite all data on $DISK"
-	read -p "Are you sure you want to continue? (y/N): " CONFIRM
-	if [[ "$CONFIRM" != "y" ]]; then
-		echo "Operation canceled."
-		exit 1
-	fi
+    echo "Warning: This script will overwrite all data on $DISK"
+    read -p "Are you sure you want to continue? (y/N): " CONFIRM
+    if [[ "$CONFIRM" != "y" ]]; then
+        echo "Operation canceled."
+        exit 1
+    fi
 
-	sgdisk --zap-all "$DISK"
-	sgdisk --new=1:2048:+1G --typecode=1:ef00 "$DISK"
-	sgdisk --new=2:0:0 --typecode=2:8304 "$DISK"
+    sgdisk --zap-all "$DISK"
+    sgdisk --new=1:2048:+1G --typecode=1:ef00 "$DISK"
+    sgdisk --new=2:0:0 --typecode=2:8304 "$DISK"
 
-	suffix=$(get_partition_suffix "$DISK")
-	EFI_PARTITION="${DISK}${suffix}1"
-	ROOT_PARTITION="${DISK}${suffix}2"
+    suffix=$(get_partition_suffix "$DISK")
+    EFI_PARTITION="${DISK}${suffix}1"
+    ROOT_PARTITION="${DISK}${suffix}2"
 
-	mkfs.fat -F 32 "$EFI_PARTITION"
-	mkfs.ext4 "$ROOT_PARTITION"
+    mkfs.fat -F 32 "$EFI_PARTITION"
+    mkfs.ext4 "$ROOT_PARTITION"
 fi
 
 # Mount partitions
@@ -130,8 +133,8 @@ genfstab -U "$MOUNT_POINT" >>/mnt/etc/fstab
 
 # Copy this script to the new system if it has another script
 if [[ -d "$SCRIPT_PATH/.git" ]]; then
-	mkdir -p "$MOUNT_POINT/arch-setup"
-	cp -r "$SCRIPT_PATH" "$MOUNT_POINT/arch-setup"
+    mkdir -p "$MOUNT_POINT/arch-setup"
+    cp -r "$SCRIPT_PATH" "$MOUNT_POINT/arch-setup"
 fi
 
 # bootloader
@@ -146,6 +149,6 @@ ARCH=${ARCH:-X64}
 cp "$LIMINE/BOOT${ARCH}.EFI" $MOUNT_POINT/boot/EFI/BOOT
 ## limine config
 cp "$SCRIPT_PATH/files/boot/limine.conf" $MOUNT_POINT/boot/limine.conf
-echo -e "\tcmdline: root=PARTUUID=$(blkid -o value -s PARTUUID $ROOT_PARTITION) rw loglevel=7" >> $MOUNT_POINT/boot/limine.conf
+echo -e "\tcmdline: root=PARTUUID=$(blkid -o value -s PARTUUID $ROOT_PARTITION) rw loglevel=7" >>$MOUNT_POINT/boot/limine.conf
 
 arch-chroot "$MOUNT_POINT"
