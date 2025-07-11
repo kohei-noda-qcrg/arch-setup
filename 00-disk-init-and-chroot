@@ -137,6 +137,10 @@ if [[ -d "$SCRIPT_PATH/.git" ]]; then
     cp -r "$SCRIPT_PATH" "$MOUNT_POINT/arch-setup"
 fi
 
+# sync files to $MOUNTPOINT
+pacman -S --noconfirm rsync
+rsync -a --progress "$SCRIPT_PATH/files/" $MOUNT_POINT
+
 # bootloader
 pacman -S --noconfirm limine efibootmgr
 mkdir -p $MOUNT_POINT/boot/EFI/BOOT
@@ -148,7 +152,6 @@ LIMINE=/usr/share/limine
 ARCH=${ARCH:-X64}
 cp "$LIMINE/BOOT${ARCH}.EFI" $MOUNT_POINT/boot/EFI/BOOT
 ## limine config
-cp "$SCRIPT_PATH/files/boot/limine.conf" $MOUNT_POINT/boot/limine.conf
 echo -e "\tcmdline: root=PARTUUID=$(blkid -o value -s PARTUUID $ROOT_PARTITION) rw loglevel=7" >>$MOUNT_POINT/boot/limine.conf
 
 arch-chroot "$MOUNT_POINT"
