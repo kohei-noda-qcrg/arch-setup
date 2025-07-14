@@ -84,7 +84,7 @@ setup_dev_environment() {
 
     # uv Python package manager
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    doas pacman -S --noconfirm python python-pip shfmt
+    doas pacman -S --noconfirm python python-pip
 
     doas pacman -S --noconfirm github-cli glab pkgconf zellij
 }
