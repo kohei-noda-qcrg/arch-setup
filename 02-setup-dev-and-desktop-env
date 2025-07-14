@@ -91,7 +91,7 @@ setup_dev_environment() {
 
 setup_desktop_environment() {
     doas pacman -S --noconfirm noto-fonts-cjk fcitx5-im fcitx5-mozc
-    cat "${SCRIPT_PATH}/files/etc/environment" | doas tee -a /etc/environment
+    doas tee -a /etc/environment <"${SCRIPT_PATH}/files/etc/environment"
 
     doas pacman -S --noconfirm alacritty brightnessctl hyprland hypridle hyprlock hyprshot ttf-font-awesome waybar wofi xorg-xwayland qt5-wayland wl-clipboard
 
