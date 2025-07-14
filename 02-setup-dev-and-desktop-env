@@ -44,7 +44,7 @@ for arg in "$@"; do
 done
 
 common() {
-    doas pacman -S --noconfirm git iw less man-db neovim nodejs npm poppler tree unzip which wpa_supplicant yazi
+    doas pacman -S --noconfirm git htop iw less man-db neovim nodejs npm poppler tree unzip which wpa_supplicant yazi
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
@@ -56,7 +56,7 @@ common() {
     . "$HOME/.bashrc"
 
     # setup yay
-    doas pacman -S --noconfirm git go debugedit fakeroot make clang
+    doas pacman -S --noconfirm go debugedit fakeroot make clang
     ## update /etc/makepkg.conf
     doas cp /etc/makepkg.conf /etc/makepkg.conf.bak
     grep -q '^PACMAN_AUTH=' /etc/makepkg.conf && doas sed -i 's|^PACMAN_AUTH=.*|PACMAN_AUTH=(doas)|' /etc/makepkg.conf ||
@@ -113,6 +113,7 @@ setup_desktop_environment() {
 
     doas pacman -S --noconfirm firefox
     doas pacman -S --noconfirm xdg-desktop-portal-hyprland # for screen share
+    doas pacman -S --noconfirm mpv
 }
 
 common
