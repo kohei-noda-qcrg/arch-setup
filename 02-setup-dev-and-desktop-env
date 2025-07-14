@@ -86,6 +86,14 @@ setup_dev_environment() {
     curl -LsSf https://astral.sh/uv/install.sh | sh
     doas pacman -S --noconfirm python python-pip
 
+    # Docker
+    doas pacman -S --noconfirm docker docker-compose
+    if ! "${CI}"; then
+        doas systemctl enable --now docker
+    fi
+    doas usermod -aG docker "$(id -un)"
+    newgrp docker
+
     doas pacman -S --noconfirm github-cli glab pkgconf zellij
 }
 
