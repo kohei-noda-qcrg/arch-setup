@@ -48,6 +48,7 @@ common() {
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
+    PRESETUP_OPTION=""
     if "${CI}"; then
         PRESETUP_OPTION="--yes"
     fi
