@@ -108,7 +108,6 @@ setup_desktop_environment() {
     doas pacman -S --noconfirm pipewire pipewire-pulse
     if ! "${CI}"; then
         systemctl --user --now enable pipewire{,-pulse}.{socket,service}
-        systemctl --user start pipewire{,-pulse}.service
     fi
 
     doas pacman -S --noconfirm firefox
