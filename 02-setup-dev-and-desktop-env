@@ -102,7 +102,7 @@ setup_desktop_environment() {
     doas pacman -S --noconfirm noto-fonts-cjk fcitx5-im fcitx5-mozc
     doas tee -a /etc/environment <"${SCRIPT_PATH}/files/etc/environment"
 
-    doas pacman -S --noconfirm alacritty brightnessctl hyprland hypridle hyprlock hyprshot ttf-font-awesome waybar wofi xorg-xwayland qt5-wayland wl-clipboard
+    doas pacman -S --noconfirm alacritty brightnessctl hyprland hypridle hyprlock hyprshot imagemagick ttf-font-awesome waybar wofi xorg-xwayland qt5-wayland wl-clipboard
 
     mkdir -p ~/.config/sway
 
