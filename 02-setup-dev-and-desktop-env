@@ -106,7 +106,7 @@ setup_desktop_environment() {
 
     mkdir -p ~/.config/sway
 
-    doas pacman -S --noconfirm pipewire pipewire-pulse
+    doas pacman -S --noconfirm pipewire pipewire-pulse sof-firmware
     if ! "${CI}"; then
         systemctl --user --now enable pipewire{,-pulse}.{socket,service}
     fi
