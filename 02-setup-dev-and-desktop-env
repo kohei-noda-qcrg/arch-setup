@@ -106,8 +106,6 @@ setup_desktop_environment() {
     # compositor related
     doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot swaync waybar wofi xorg-xwayland qt5-wayland
 
-    mkdir -p ~/.config/sway
-
     doas pacman -S --noconfirm pipewire pipewire-pulse sof-firmware
     if ! "${CI}"; then
         systemctl --user --now enable pipewire{,-pulse}.{socket,service}
