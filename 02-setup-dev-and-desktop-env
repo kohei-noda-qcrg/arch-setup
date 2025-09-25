@@ -104,7 +104,7 @@ setup_desktop_environment() {
 
     doas pacman -S --noconfirm alacritty brightnessctl imagemagick ttf-font-awesome wl-clipboard
     # compositor related
-    doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot swaync waybar wofi xorg-xwayland qt5-wayland
+    doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot otf-font-awesome swaync waybar wofi xorg-xwayland qt5-wayland
 
     doas pacman -S --noconfirm pipewire pipewire-pulse sof-firmware
     if ! "${CI}"; then
