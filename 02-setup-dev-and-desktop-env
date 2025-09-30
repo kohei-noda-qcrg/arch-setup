@@ -45,6 +45,8 @@ done
 
 common() {
     doas pacman -S --noconfirm 7zip git htop iw less man-db neovim nodejs npm poppler tree unzip which wpa_supplicant yazi zoxide
+    # completion
+    doas pacman -S --noconfirm usage bash-completion
     # dotfiles
     dest_dotfiles="$HOME/.config/dotfiles"
     [ ! -d "$dest_dotfiles" ] && git clone https://github.com/kohei-noda-qcrg/dotfiles "$dest_dotfiles"
