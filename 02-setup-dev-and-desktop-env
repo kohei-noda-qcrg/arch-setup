@@ -85,6 +85,9 @@ setup_dev_environment() {
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y # rust
     . $HOME/.cargo/env
 
+    # mise dev tools
+    doas pacman -S --noconfirm mise
+
     # uv Python package manager
     curl -LsSf https://astral.sh/uv/install.sh | sh
     doas pacman -S --noconfirm python python-pip
