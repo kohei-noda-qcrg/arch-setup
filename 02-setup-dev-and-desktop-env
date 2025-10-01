@@ -81,15 +81,15 @@ common() {
 
 setup_dev_environment() {
     doas pacman -S --noconfirm cmake diffutils patch
-    doas pacman -S --noconfirm lldb gdb                                     # debugger
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y # rust
+    doas pacman -S --noconfirm lldb gdb                                                      # debugger
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path # rust
     . $HOME/.cargo/env
 
     # mise dev tools
     doas pacman -S --noconfirm mise
 
     # uv Python package manager
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --no-modify-path
     doas pacman -S --noconfirm python python-pip
 
     # Docker
