@@ -110,6 +110,9 @@ setup_desktop_environment() {
     # compositor related
     doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot otf-font-awesome swaync waybar wofi xorg-xwayland qt5-wayland
 
+    # for vim plugins
+    yay -S --noconfirm vivify
+    # sound
     doas pacman -S --noconfirm pipewire pipewire-pulse sof-firmware
     if ! "${CI}"; then
         systemctl --user --now enable pipewire{,-pulse}.{socket,service}
