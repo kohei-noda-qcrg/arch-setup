@@ -111,7 +111,9 @@ setup_desktop_environment() {
     doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot otf-font-awesome swaync waybar wofi xorg-xwayland qt5-wayland
 
     # for vim plugins
-    yay -S --noconfirm vivify
+    if ! "${CI}"; then
+        yay -S --noconfirm vivify
+    fi
     # sound
     doas pacman -S --noconfirm pipewire pipewire-pulse sof-firmware
     if ! "${CI}"; then
