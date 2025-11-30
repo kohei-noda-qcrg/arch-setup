@@ -133,8 +133,7 @@ genfstab -U "$MOUNT_POINT" >>/mnt/etc/fstab
 
 # Copy this script to the new system if it has another script
 if [[ -d "$SCRIPT_PATH/.git" ]]; then
-    mkdir -p "$MOUNT_POINT/arch-setup"
-    cp -r "$SCRIPT_PATH" "$MOUNT_POINT/arch-setup"
+    cp -r "$SCRIPT_PATH" "$MOUNT_POINT"
 fi
 
 # sync files to $MOUNTPOINT
