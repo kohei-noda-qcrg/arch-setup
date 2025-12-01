@@ -22,4 +22,4 @@ jobs:
           echo "permit nopass test" >>/etc/doas.conf
           chmod 0600 /etc/doas.conf
       - name: run test
-        run: su test -c 'CI=true GIT_USERNAME=test GIT_EMAIL=test@test.com /github/workspace/02-setup-dev-and-desktop-env'
+        run: su test -c 'CI=true GIT_USERNAME=test GIT_EMAIL=test@test.com bash -x /github/workspace/02-setup-dev-and-desktop-env'
