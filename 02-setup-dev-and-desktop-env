@@ -47,6 +47,7 @@ common() {
     doas pacman -S --noconfirm \
         7zip \
         git \
+        gptfdisk \
         htop \
         iw \
         less \
