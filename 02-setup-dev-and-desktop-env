@@ -129,9 +129,11 @@ setup_desktop_environment() {
     # compositor related
     doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot otf-font-awesome swaync waybar wofi xorg-xwayland qt5-wayland
 
-    # for vim plugins
     if ! "${CI}"; then
+        # for vim plugins
         yay -S --noconfirm vivify
+        # file drag & drop
+        yay -S --noconfirm ripdrag
     fi
     # sound
     doas pacman -S --noconfirm pipewire pipewire-pulse sof-firmware
