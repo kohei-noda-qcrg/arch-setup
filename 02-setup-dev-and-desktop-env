@@ -61,7 +61,6 @@ common() {
         tree \
         unzip \
         which \
-        wpa_supplicant \
         yazi \
         zoxide
 
