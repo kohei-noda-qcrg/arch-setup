@@ -7,11 +7,13 @@ show_help() {
     echo "Options:"
     echo "  --username <USERNAME> Specify the username"
     echo "  --wsl                 Skip setup not for wsl"
+    echo "  --no-dhcp             Skip dhcpcd setup, NOTE: you need to setup network config manually with this option"
     echo "  --help                Show this help message"
 }
 
 # get option --username "username"
 USERNAME=""
+NODHCP=false
 WSL=false
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -23,6 +25,10 @@ while [[ $# -gt 0 ]]; do
         )
         USERNAME="$2"
         shift 2
+        ;;
+    --no-dhcp)
+        NODHCP=true
+        shift
         ;;
     --wsl)
         WSL=true
@@ -101,43 +107,16 @@ EOF
     systemctl --user start wsl-wayland-symlink.service
 
 else
-
-    # dhcp
-    pacman -S --noconfirm dhcpcd
-    while true; do
-        valid_numbers=()
-        declare -A num_to_iface
-
-        mapfile -t interface_lines < <(ip -o l)
-        for line in "${interface_lines[@]}"; do
-            num=$(echo "$line" | awk -F: '{print $1}')
-            iface=$(echo "$line" | awk -F': ' '{print $2}' | awk '{print $1}')
-            valid_numbers+=("$num")
-            num_to_iface["$num"]="$iface"
-        done
-
-        echo "Available intefaces:"
-        for num in "${valid_numbers[@]}"; do
-            echo "  $num) ${num_to_iface[$num]}"
-        done
-        echo "  c) Cancel to setup dhcpcd"
-
-        echo "Please select a number from the list above (or 'c' to cancel):"
-        read -r number
-
-        if [[ "$number" == "c" ]]; then
-            echo "Cancelled to setup dhcpcd by user."
-            break
-        elif [[ " ${valid_numbers[*]} " =~ " $number " ]]; then
-            interface="${num_to_iface[$number]}"
-            echo "Selected interface: $interface"
-            systemctl enable "dhcpcd@${interface}.service"
-            echo "Enabled dhcpcd@${interface}.service"
-            break
-        else
-            echo "Invalid input. Please select one of: ${valid_numbers[*]} c"
-        fi
-    done
+    # network (dhcpcd and iwd)
+    pacman -S --noconfirm dhcpcd iwd
+    systemctl enable iwd.service
+    if ! $NODHCP; then
+        echo "enabling dhcpcd.service"
+        systemctl enable "dhcpcd.service"
+    else
+        echo "you passed --no-dhcp option. skip dhcpcd setup." >&2
+        echo "NOTE: you need to setup network config manually with this option." >&2
+    fi
 
     echo "exit from chroot env, reboot and remove install disk"
 fi
