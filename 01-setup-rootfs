@@ -108,12 +108,14 @@ EOF
     systemctl --user start wsl-wayland-symlink.service
 
 else
-    # network (dhcpcd and iwd)
-    pacman -S --noconfirm dhcpcd iwd
+    # network (iwd and network services)
+    pacman -S --noconfirm iwd
     systemctl enable iwd.service
     if ! $NODHCP; then
-        echo "enabling dhcpcd.service"
-        systemctl enable "dhcpcd.service"
+        echo "enabling network services..."
+        systemctl enable systemd-networkd.service
+        systemctl enable systemd-resolved.service
+        ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
     else
         echo "you passed --no-dhcp option. skip dhcpcd setup." >&2
         echo "NOTE: you need to setup network config manually with this option." >&2
