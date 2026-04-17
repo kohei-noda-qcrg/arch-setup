@@ -114,7 +114,6 @@ setup_dev_environment() {
 
 setup_desktop_environment() {
     doas pacman -S --noconfirm noto-fonts-cjk fcitx5-im fcitx5-mozc
-    doas tee -a /etc/environment <"${SCRIPT_PATH}/files/etc/environment"
 
     doas pacman -S --noconfirm alacritty brightnessctl foot imagemagick ttf-font-awesome wl-clipboard
     # compositor related
