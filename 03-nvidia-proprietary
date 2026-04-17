@@ -6,8 +6,15 @@ set -eu
 # when using NVIDIA GPUs, so we need to install them
 
 doas pacman -S --noconfirm nvidia-dkms nvidia-utils linux-headers
-doas bash -c 'echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia.conf'
-doas sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_drm nvidia_uvm /' /etc/mkinitcpio.conf
+
+file="/etc/modprobe.d/nvidia.conf"
+doas mkdir -p "$(dirname "$file")"
+echo "options nvidia-drm modeset=1" | doas tee "$file" >/dev/null
+
+file="/etc/mkinitcpio.conf.d/nvidia.conf"
+doas mkdir -p "$(dirname "$file")"
+echo "MODULES+=(nvidia nvidia_modeset nvidia_drm nvidia_uvm)" | doas tee "$file" >/dev/null
+
 doas mkinitcpio -P
 doas dkms autoinstall
 
