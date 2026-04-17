@@ -62,7 +62,17 @@ hwclock --systohc
 ln -sf /usr/share/zoneinfo/${REGION}/${CITY} /etc/localtime
 systemctl enable systemd-timesyncd.service
 
-echo -e "en_US.UTF-8 UTF-8\nja_JP.UTF-8 UTF8" >>/etc/locale.gen
+file="/etc/locale.gen"
+if [ ! -f "$file" ]; then
+    echo -e "en_US.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8" >>"$file"
+else
+    if ! grep -q "^en_US.UTF-8 UTF-8" "$file"; then
+        echo "en_US.UTF-8 UTF-8" >>"$file"
+    fi
+    if ! grep -q "^ja_JP.UTF-8 UTF-8" "$file"; then
+        echo "ja_JP.UTF-8 UTF-8" >>"$file"
+    fi
+fi
 locale-gen
 echo "LANG=en_US.UTF-8" >/etc/locale.conf
 
@@ -70,7 +80,10 @@ echo "${HOST}" >/etc/hostname
 
 # doas
 pacman -S --noconfirm doas
-echo "permit persist :wheel" >>/etc/doas.conf
+file="/etc/doas.conf"
+if [ ! -f "$file" ] || ! grep -q "^permit persist :wheel" "$file"; then
+    echo "permit persist :wheel" >>"$file"
+fi
 chmod 0600 /etc/doas.conf
 
 # key remap
