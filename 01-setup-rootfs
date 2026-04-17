@@ -48,12 +48,19 @@ if [[ -z "${USERNAME:-}" ]]; then
     exit 1
 fi
 
-echo "set root password"
-passwd # root password
+if awk -F: '$1=="root" {print $2}' /etc/shadow | grep -q '^[!*]'; then
+    echo "set root password:"
+    passwd
+fi
 # setup user
-useradd -m -g users -G wheel -s /bin/bash "$USERNAME"
-echo "set ${USERNAME} password"
-passwd "$USERNAME"
+if ! id "$USERNAME" &>/dev/null; then
+    echo "creating user ${USERNAME}..."
+    useradd -m -g users -G wheel -s /bin/bash "$USERNAME"
+    echo "set ${USERNAME} password:"
+    passwd "$USERNAME"
+else
+    echo "user ${USERNAME} already exists. skipping creation."
+fi
 
 REGION=Asia
 CITY=Tokyo
@@ -101,10 +108,10 @@ systemd=true
 [network]
 hostname=Arch" >/etc/wsl.conf
 
-    su $USERNAME
-    mkdir -p "${HOME}/.config/systemd/user"
+    USERHOME="/home/${USERNAME}"
+    mkdir -p "${USERHOME}/.config/systemd/user"
 
-    cat <<"EOF" >"${HOME}/.config/systemd/user/wsl-wayland-symlink.service"
+    cat <<"EOF" >"${USERHOME}/.config/systemd/user/wsl-wayland-symlink.service"
 [Unit]
 Description=Create Wayland symlinks for WSL
 After=default.target
@@ -116,9 +123,11 @@ ExecStart=/bin/sh -c 'USER_ID=$(id -u); find /mnt/wslg/runtime-dir -name "waylan
 [Install]
 WantedBy=default.target
 EOF
-    systemctl --user daemon-reload
-    systemctl --user enable wsl-wayland-symlink.service
-    systemctl --user start wsl-wayland-symlink.service
+    chown -R "${USERNAME}:users" "${USERHOME}/.config"
+
+    su - "${USERNAME}" -c "systemctl --user daemon-reload"
+    su - "${USERNAME}" -c "systemctl --user enable wsl-wayland-symlink.service"
+    su - "${USERNAME}" -c "systemctl --user start wsl-wayland-symlink.service || true"
 
 else
     # network (iwd and network services)
