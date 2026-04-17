@@ -151,6 +151,9 @@ LIMINE=/usr/share/limine
 ARCH=${ARCH:-X64}
 cp "$LIMINE/BOOT${ARCH}.EFI" $MOUNT_POINT/boot/EFI/BOOT
 ## limine config
-echo -e "\tcmdline: root=PARTUUID=$(blkid -o value -s PARTUUID $ROOT_PARTITION) rw loglevel=7" >>$MOUNT_POINT/boot/limine.conf
+LIMINE_CONF="$MOUNT_POINT/boot/limine.conf"
+if ! grep -q "^[[:space:]]*cmdline: root=" "$LIMINE_CONF" 2>/dev/null; then
+    echo -e "\tcmdline: root=PARTUUID=$(blkid -o value -s PARTUUID $ROOT_PARTITION) rw loglevel=7" >>"$LIMINE_CONF"
+fi
 
 arch-chroot "$MOUNT_POINT"
