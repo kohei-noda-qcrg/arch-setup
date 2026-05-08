@@ -10,6 +10,7 @@ SCRIPT_PATH=$(
 DISK=""
 EFI_PARTITION=""
 ROOT_PARTITION=""
+USE_LTS=false
 
 show_help() {
     echo "Usage: $0 [options]"
@@ -17,6 +18,7 @@ show_help() {
     echo "  --initialize <DISK> Initialize the disk (warning: this will erase all data on <DISK>)"
     echo "  --efi <PARTITION>   Specify the EFI partition (e.g. /dev/sda1)"
     echo "  --root <PARTITION>  Specify the root partition (e.g. /dev/sda2)"
+    echo "  --lts               Use the latest LTS kernel instead of the default"
     echo "  --help              Show this help message"
 }
 
@@ -53,6 +55,10 @@ while [[ $# -gt 0 ]]; do
         [[ -z ${2:-} ]] && error_arg_required "$arg"
         ROOT_PARTITION="$2"
         shift 2
+        ;;
+    --lts)
+        USE_LTS=true
+        shift
         ;;
     --help)
         show_help
@@ -126,7 +132,11 @@ mkdir -p "$MOUNT_POINT/boot"
 mount "$EFI_PARTITION" "$MOUNT_POINT/boot"
 
 # Install essential packages
-pacstrap -K "$MOUNT_POINT" base linux linux-firmware
+if $USE_LTS; then
+    pacstrap -K "$MOUNT_POINT" base linux-lts linux-firmware
+else
+    pacstrap -K "$MOUNT_POINT" base linux linux-firmware
+fi
 
 # Generate fstab
 genfstab -U "$MOUNT_POINT" >>/mnt/etc/fstab
