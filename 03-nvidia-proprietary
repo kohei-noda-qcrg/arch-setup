@@ -5,7 +5,7 @@ set -eu
 # sadly, hyprland requires NVIDIA proprietary drivers
 # when using NVIDIA GPUs, so we need to install them
 
-doas pacman -S --noconfirm nvidia-open nvidia-utils
+doas pacman -S --noconfirm linux-headers nvidia-open-dkms nvidia-utils
 
 file="/etc/modprobe.d/nvidia.conf"
 doas mkdir -p "$(dirname "$file")"
