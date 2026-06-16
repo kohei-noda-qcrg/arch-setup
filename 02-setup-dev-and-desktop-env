@@ -134,6 +134,7 @@ setup_desktop_environment() {
     doas pacman -S --noconfirm firefox
     doas pacman -S --noconfirm xdg-desktop-portal-hyprland # for screen share
     doas pacman -S --noconfirm mpv wf-recorder
+    doas pacman -S --noconfirm pavucontrol
 }
 
 common
