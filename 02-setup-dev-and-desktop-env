@@ -8,6 +8,7 @@ SCRIPT_PATH=$(
 )
 RUN_DEV=true
 RUN_DESKTOP=true
+NO_AUR=false
 
 CI=${CI:-false} # need to be enabled only CI env
 
@@ -17,6 +18,7 @@ show_help() {
     echo "Options:"
     echo "  --no-dev      Skip setting up development environment"
     echo "  --no-desktop  Skip setting up desktop environment"
+    echo "  --no-aur      Skip installing yay and AUR packages"
     echo "  --help        Show this help message"
 }
 
@@ -29,6 +31,10 @@ for arg in "$@"; do
         ;;
     --no-desktop)
         RUN_DESKTOP=false
+        shift
+        ;;
+    --no-aur)
+        NO_AUR=true
         shift
         ;;
     --help)
@@ -46,12 +52,15 @@ done
 common() {
     doas pacman -S --noconfirm \
         7zip \
+        clang \
         fzf \
         git \
+        go \
         gptfdisk \
         htop \
         iw \
         less \
+        make \
         man-db \
         neovim \
         nodejs \
@@ -79,17 +88,19 @@ common() {
     . "$HOME/.bashrc"
 
     # setup yay
-    doas pacman -S --noconfirm go debugedit fakeroot make clang
-    ## update /etc/makepkg.conf
-    doas cp /etc/makepkg.conf /etc/makepkg.conf.bak
-    grep -q '^PACMAN_AUTH=' /etc/makepkg.conf && doas sed -i 's|^PACMAN_AUTH=.*|PACMAN_AUTH=(doas)|' /etc/makepkg.conf ||
-        echo 'PACMAN_AUTH=(doas)' | doas tee -a /etc/makepkg.conf
-    ## clone yay
-    [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
-    pushd /tmp/yay
-    ## build and install yay
-    makepkg -si --noconfirm
-    popd
+    if ! $NO_AUR; then
+        doas pacman -S --noconfirm debugedit fakeroot
+        ## update /etc/makepkg.conf
+        doas cp /etc/makepkg.conf /etc/makepkg.conf.bak
+        grep -q '^PACMAN_AUTH=' /etc/makepkg.conf && doas sed -i 's|^PACMAN_AUTH=.*|PACMAN_AUTH=(doas)|' /etc/makepkg.conf ||
+            echo 'PACMAN_AUTH=(doas)' | doas tee -a /etc/makepkg.conf
+        ## clone yay
+        [ ! -d /tmp/yay ] && git clone https://aur.archlinux.org/yay.git /tmp/yay
+        pushd /tmp/yay
+        ## build and install yay
+        makepkg -si --noconfirm
+        popd
+    fi
 }
 
 setup_dev_environment() {
@@ -119,7 +130,7 @@ setup_desktop_environment() {
     # compositor related
     doas pacman -S --noconfirm hyprland hypridle hyprlock hyprshot otf-font-awesome swaync waybar wofi xorg-xwayland qt5-wayland
 
-    if ! "${CI}"; then
+    if ! $NO_AUR && ! "${CI}"; then
         # for vim plugins
         yay -S --noconfirm vivify
         # file drag & drop
